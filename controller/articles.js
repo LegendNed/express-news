@@ -12,7 +12,7 @@ exports.getArticleByID = (req, res, next) => {
 
     fetchArticleByID(article_id)
         .then(article => {
-            if (!article) return res.status(403).send()
+            if (!article) return res.status(404).send()
 
             res.status(200).send({ article })
         })

@@ -35,10 +35,10 @@ describe('GET', () => {
                 })
         });
 
-        it('403: Returns nothing when no data is found', () => {
+        it('404: Returns nothing when no data is found', () => {
             return request(app)
                 .get('/api/articles/999')
-                .expect(403)
+                .expect(404)
         });
 
         it('400: Return error if invalid article_id is provided', () => {
