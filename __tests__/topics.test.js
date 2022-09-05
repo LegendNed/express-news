@@ -7,7 +7,7 @@ const testData = require('../db/data/test-data')
 const DB = require('../db')
 
 beforeEach(() => seed(testData))
-afterEach(() => DB.end())
+afterAll(() => DB.end())
 
 describe('GET', () => {
     describe('/api/topics', () => {
