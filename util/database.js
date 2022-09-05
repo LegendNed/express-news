@@ -1,2 +1,2 @@
-exports.RETURN_ALL = (res) => res.rows
-exports.RETURN_FIRST = (res) => res.rows[0]
+exports.returnAll = (res) => res.rows
+exports.returnFirst = (res) => res.rows[0]
