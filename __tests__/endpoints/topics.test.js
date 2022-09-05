@@ -1,10 +1,10 @@
 const request = require('supertest')
-const app = require('../app')
+const app = require('../../app')
 
-const seed = require('../db/seeds/seed')
-const testData = require('../db/data/test-data')
+const seed = require('../../db/seeds/seed')
+const testData = require('../../db/data/test-data')
 
-const DB = require('../db')
+const DB = require('../../db')
 
 beforeEach(() => seed(testData))
 afterAll(() => DB.end())

@@ -1,10 +1,10 @@
 const request = require('supertest')
-const app = require('../app')
+const app = require('../../app')
 
-const seed = require('../db/seeds/seed')
-const testData = require('../db/data/test-data')
+const seed = require('../../db/seeds/seed')
+const testData = require('../../db/data/test-data')
 
-const DB = require('../db')
+const DB = require('../../db')
 
 beforeEach(() => seed(testData))
 afterAll(() => DB.end())
@@ -35,22 +35,38 @@ describe('GET', () => {
                 })
         });
 
-        it('204: Returns nothing when no data is found', () => {
+        it('403: Returns nothing when no data is found', () => {
             return request(app)
                 .get('/api/articles/999')
-                .expect(204)
+                .expect(403)
         });
 
         it('400: Return error if invalid article_id is provided', () => {
-            return request(app)
-                .get('/api/articles/cat')
-                .expect(400)
-                .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
+            let validateResponse = ({ body }) => {
+                expect(Array.isArray(body)).toBe(false)
 
-                    expect(body).toHaveProperty('message')
-                    expect(body.message).toBe("Invalid article_id provided")
-                })
+                expect(body).toHaveProperty('message')
+                expect(body.message).toBe("Invalid article_id provided")
+            }
+
+            let testCases = [
+                request(app)
+                    .get('/api/articles/cat')
+                    .expect(400)
+                    .then(validateResponse),
+
+                request(app)
+                    .get('/api/articles/0.1')
+                    .expect(400)
+                    .then(validateResponse),
+
+                request(app)
+                    .get('/api/articles/-20')
+                    .expect(400)
+                    .then(validateResponse)
+            ]
+
+            return Promise.all(testCases)
         });
     });
 });
