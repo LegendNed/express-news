@@ -1,10 +1,10 @@
 const Express = require('express')
 
-const { Topics } = require('./controller')
+const { topics } = require('./controller')
 
 const app = Express()
 
-app.get('/api/topics', Topics.getTopics)
+app.get('/api/topics', topics.getTopics)
 
 app.use((err, req, res, next) => {
     if (!err) next()

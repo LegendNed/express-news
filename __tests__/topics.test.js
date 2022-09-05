@@ -16,7 +16,6 @@ describe('GET', () => {
                 .get('/api/topics')
                 .expect(200)
                 .then(({ body }) => {
-                    expect(typeof body).toBe('object')
                     expect(Array.isArray(body)).toBe(false)
 
                     const { topics } = body

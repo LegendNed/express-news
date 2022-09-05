@@ -1,1 +1,1 @@
-exports.Topics = require('./topics')
+exports.topics = require('./topics')
