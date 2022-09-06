@@ -23,15 +23,30 @@ describe('GET', () => {
 
                     expect(article).toEqual(
                         expect.objectContaining({
-                            article_id: expect.any(Number),
+                            article_id: 1,
                             author: expect.any(String),
                             title: expect.any(String),
                             body: expect.any(String),
                             topic: expect.any(String),
-                            created_at: expect.any(String),
-                            votes: expect.any(Number),
+                            created_at: expect.toBeDateString(),
+                            votes: expect.toBePositive(),
+                            comment_count: expect.toBePositive()
                         })
                     )
+                })
+        });
+
+        it('200: Retrieve single article with 0 comments', () => {
+            return request(app)
+                .get('/api/articles/2')
+                .expect(200)
+                .then(({ body }) => {
+                    expect(Array.isArray(body)).toBe(false)
+
+                    const { article } = body
+                    expect(Array.isArray(article)).toBe(false)
+
+                    expect(article.comment_count).toBe(0)
                 })
         });
 
@@ -87,7 +102,7 @@ describe('PATCH', () => {
                         title: expect.any(String),
                         body: expect.any(String),
                         topic: expect.any(String),
-                        created_at: expect.any(String),
+                        created_at: expect.toBeDateString(),
                         votes: expectedVotes,
                     })
                 )
