@@ -9,3 +9,14 @@ exports.fetchArticleByID = (id) => {
         `, [id])
         .then(returnFirst)
 }
+
+exports.updateArticle = (id, number) => {
+    return DB
+        .query(`
+        UPDATE articles
+        SET votes = votes + $1
+        WHERE article_id = $2
+        RETURNING *
+        `, [number, id])
+        .then(returnFirst)
+}
