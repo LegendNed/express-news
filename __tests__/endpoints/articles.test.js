@@ -57,7 +57,7 @@ describe('GET', () => {
                         descending: true
                     })
 
-                    let article = articles[0]
+                    const [article] = articles
                     expect(article).toEqual(
                         expect.objectContaining({
                             "article_id": 5,
@@ -86,7 +86,7 @@ describe('GET', () => {
                 })
         });
 
-        it('200: Return an error if topic doesnt exist', () => {
+        it('404: Return an error if topic doesnt exist', () => {
             return request(app)
                 .get('/api/articles?topic=evol')
                 .expect(404)
