@@ -10,6 +10,95 @@ beforeEach(() => seed(testData))
 afterAll(() => DB.end())
 
 describe('GET', () => {
+    describe('/api/articles', () => {
+        it('200: Retrieve all data sorted by date', () => {
+            return request(app)
+                .get('/api/articles')
+                .expect(200)
+                .then(({ body }) => {
+                    expect(Array.isArray(body)).toBe(false)
+
+                    const { articles } = body
+                    expect(Array.isArray(articles)).toBe(true)
+
+                    expect(articles).toBeSortedBy('created_at', {
+                        descending: true
+                    })
+
+                    articles.forEach(article => {
+                        expect(article).toEqual(
+                            expect.objectContaining({
+                                article_id: expect.any(Number),
+                                author: expect.any(String),
+                                title: expect.any(String),
+                                body: expect.any(String),
+                                topic: expect.any(String),
+                                created_at: expect.toBeDateString(),
+                                votes: expect.any(Number),
+                                comment_count: expect.any(Number)
+                            })
+                        )
+                    })
+                })
+        });
+
+        it('200: Retrieve all articles from topic query', () => {
+            return request(app)
+                .get('/api/articles?topic=cats')
+                .expect(200)
+                .then(({ body }) => {
+                    expect(Array.isArray(body)).toBe(false)
+
+                    const { articles } = body
+                    expect(Array.isArray(articles)).toBe(true)
+                    expect(articles).toHaveLength(1)
+
+                    expect(articles).toBeSortedBy('created_at', {
+                        descending: true
+                    })
+
+                    const [article] = articles
+                    expect(article).toEqual(
+                        expect.objectContaining({
+                            "article_id": 5,
+                            "title": "UNCOVERED: catspiracy to bring down democracy",
+                            "topic": "cats",
+                            "author": "rogersop",
+                            "body": "Bastet walks amongst us, and the cats are taking arms!",
+                            "created_at": "2020-08-03T13:14:00.000Z",
+                            "votes": 0,
+                            "comment_count": 2
+                        })
+                    )
+                })
+        });
+
+        it('200: Retrieve empty array of articles from topic query that has none', () => {
+            return request(app)
+                .get('/api/articles?topic=paper')
+                .expect(200)
+                .then(({ body }) => {
+                    expect(Array.isArray(body)).toBe(false)
+
+                    const { articles } = body
+                    expect(Array.isArray(articles)).toBe(true)
+                    expect(articles).toHaveLength(0)
+                })
+        });
+
+        it('404: Return an error if topic doesnt exist', () => {
+            return request(app)
+                .get('/api/articles?topic=evol')
+                .expect(404)
+                .then(({ body }) => {
+                    expect(Array.isArray(body)).toBe(false)
+
+                    expect(body).toHaveProperty('message')
+                    expect(body.message).toBe("Topic evol does not exist")
+                })
+        });
+    });
+
     describe('/api/articles/:article_id', () => {
         it('200: Retrieve single artile if valid ID provided', () => {
             return request(app)
