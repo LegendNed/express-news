@@ -1,12 +1,13 @@
 const express = require('express')
 
-const { topics, articles } = require('./controller')
+const { topics, articles, users } = require('./controller')
 const { isErrorObject } = require('./util/server')
 
 const app = express()
 
 app.get('/api/topics', topics.getTopics)
 app.get('/api/articles/:article_id', articles.getArticleByID)
+app.get('/api/users', users.getUsers)
 
 app.use((err, req, res, next) => {
     if (!err) next()
