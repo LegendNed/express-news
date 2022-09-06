@@ -82,7 +82,7 @@ describe('PATCH', () => {
 
                 expect(article).toEqual(
                     expect.objectContaining({
-                        article_id: expect.any(Number),
+                        article_id: 1,
                         author: expect.any(String),
                         title: expect.any(String),
                         body: expect.any(String),
