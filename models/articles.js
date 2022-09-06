@@ -9,3 +9,14 @@ exports.fetchArticleByID = (id) => {
         `, [id])
         .then(returnFirst)
 }
+
+exports.updateArticle = (id, number) => {
+    return DB
+        .query(`
+        UPDATE articles
+        SET votes = votes ${number >= 0 ? "+" : "-"} ${Math.abs(number)}
+        WHERE article_id = $1
+        RETURNING *
+        `, [id])
+        .then(returnFirst)
+}
