@@ -184,11 +184,12 @@ describe('GET', () => {
 
                     const { comments } = body
                     expect(Array.isArray(comments)).toBe(true)
+                    expect(comments).not.toHaveLength(0)
 
                     comments.forEach(comment => {
                         expect(comment).toEqual(
                             expect.objectContaining({
-                                comment_id: expect.any(Number),
+                                comment_id: expect.toBePositive(),
                                 votes: expect.any(Number),
                                 created_at: expect.toBeDateString(),
                                 author: expect.any(String),
