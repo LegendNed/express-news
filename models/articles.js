@@ -1,7 +1,8 @@
 const DB = require('../db')
-const { returnFirst, returnAll } = require('../util/database')
+const format = require('pg-format')
+const { returnFirst } = require('../util/database')
 
-exports.fetchArticles = ({ topic } = {}) => {
+exports.fetchArticles = ({ topic, sort_by = "created_at", order = "desc" } = {}) => {
     let params = [],
         query = `
         SELECT articles.*, 
@@ -12,16 +13,17 @@ exports.fetchArticles = ({ topic } = {}) => {
 
     if (topic) {
         params.push(topic)
-        query += ` WHERE articles.topic = $${params.length}`
+        query += ` WHERE articles.topic = %${params.length}$L`
     }
 
+    params.push(sort_by)
     query += ` 
         GROUP BY articles.article_id
-        ORDER BY articles.created_at DESC
+        ORDER BY articles.%${params.length}$I ${order.toUpperCase()}
     `
 
     return DB
-        .query(query, params)
+        .query(format(query, ...params))
         .then(({ rows, rowCount }) => {
             if (rowCount) return [rows]
 
@@ -38,6 +40,15 @@ exports.fetchArticles = ({ topic } = {}) => {
             })
 
             return []
+        })
+        .catch((err) => {
+            if (err.routine !== 'errorMissingColumn')
+                return Promise.reject(err)
+
+            return Promise.reject({
+                status: 400,
+                message: `Cannot sort by ${sort_by}`
+            })
         })
 }
 
