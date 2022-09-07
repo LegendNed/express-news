@@ -363,3 +363,134 @@ describe('PATCH', () => {
     })
 
 });
+
+describe('POST', () => {
+    describe('/api/articles/:article_id/comments', () => {
+        it('201: Append a comment to an article', () => {
+            const validateResponse = ({ username, body: commentBody }, { body }) => {
+                expect(Array.isArray(body)).toBe(false)
+
+                const { comment } = body
+                expect(Array.isArray(comment)).toBe(false)
+
+                expect(comment).toEqual(
+                    expect.objectContaining({
+                        comment_id: expect.any(Number),
+                        body: commentBody,
+                        article_id: expect.any(Number),
+                        author: username,
+                        votes: 0,
+                        created_at: expect.toBeDateString()
+                    })
+                )
+            }
+
+            const testCases = [
+                request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ username: 'lurker', body: 'Hell' })
+                    .expect(201)
+                    .then(validateResponse.bind(null, { username: 'lurker', body: 'Hell' })),
+
+                request(app)
+                    .post('/api/articles/2/comments')
+                    .send({ username: 'lurker', body: 'Heaven' })
+                    .expect(201)
+                    .then(validateResponse.bind(null, { username: 'lurker', body: 'Heaven' })),
+            ]
+
+            return Promise.all(testCases)
+        });
+
+        it('400: Return error if invalid article_id is provided', () => {
+            const validateResponse = ({ body }) => {
+                expect(Array.isArray(body)).toBe(false)
+
+                expect(body).toHaveProperty('message')
+                expect(body.message).toBe("Invalid article_id provided")
+            }
+
+            const testCases = [
+                request(app)
+                    .post('/api/articles/cat/comments')
+                    .expect(400)
+                    .then(validateResponse),
+
+                request(app)
+                    .post('/api/articles/0.1/comments')
+                    .expect(400)
+                    .then(validateResponse),
+
+                request(app)
+                    .post('/api/articles/-20/comments')
+                    .expect(400)
+                    .then(validateResponse)
+            ]
+
+            return Promise.all(testCases)
+        });
+
+        it('400: Return error message if invalid body provided', () => {
+            const validateResponse = ({ body }) => {
+                expect(Array.isArray(body)).toBe(false)
+
+                expect(body).toHaveProperty('message')
+                expect(body.message).toBe('Properties should be strings')
+            }
+
+            const testCases = [
+                request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ author: 'world' })
+                    .expect(400)
+                    .then(validateResponse),
+
+                request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ body: 10 })
+                    .expect(400)
+                    .then(validateResponse),
+
+                request(app)
+                    .post('/api/articles/1/comments')
+                    .send({ body: {}, author: 'Ned' })
+                    .expect(400)
+                    .then(validateResponse),
+
+                request(app)
+                    .post('/api/articles/1/comments')
+                    .send({})
+                    .expect(400)
+                    .then(validateResponse),
+            ]
+
+            return Promise.all(testCases)
+        });
+
+        it('400: Return error message if author doesnt exist', () => {
+            return request(app)
+                .post('/api/articles/1/comments')
+                .send({ username: 'Ned', body: "Hello?" })
+                .expect(400)
+                .then(({ body }) => {
+                    expect(Array.isArray(body)).toBe(false)
+
+                    expect(body).toHaveProperty('message')
+                    expect(body.message).toBe('"Ned" is not a valid author')
+                })
+        });
+
+        it('400: Return error message if article_id doesnt exist', () => {
+            return request(app)
+                .post('/api/articles/9999/comments')
+                .send({ username: 'lurker', body: "Hello?" })
+                .expect(400)
+                .then(({ body }) => {
+                    expect(Array.isArray(body)).toBe(false)
+
+                    expect(body).toHaveProperty('message')
+                    expect(body.message).toBe('"9999" is not a valid article')
+                })
+        });
+    })
+});
