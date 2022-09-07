@@ -173,6 +173,56 @@ describe('GET', () => {
             return Promise.all(testCases)
         });
     });
+
+    describe('/api/articles/:article_id/comments', () => {
+        it('200: Retrieve all comments from article', () => {
+            return request(app)
+                .get('/api/articles/1/comments')
+                .expect(200)
+                .then(({ body }) => {
+                    expect(Array.isArray(body)).toBe(false)
+
+                    const { comments } = body
+                    expect(Array.isArray(comments)).toBe(true)
+
+                    comments.forEach(comment => {
+                        expect(comment).toEqual(
+                            expect.objectContaining({
+                                comment_id: expect.any(Number),
+                                votes: expect.any(Number),
+                                created_at: expect.toBeDateString(),
+                                author: expect.any(String),
+                                body: expect.any(String)
+                            })
+                        )
+                    })
+                })
+        });
+
+        it('200: Retrieve article with 0 comments', () => {
+            return request(app)
+                .get('/api/articles/2/comments')
+                .expect(200)
+                .then(({ body }) => {
+                    expect(Array.isArray(body)).toBe(false)
+
+                    const { comments } = body
+                    expect(comments).toEqual([])
+                })
+        });
+
+        it('400: Return error if invalid article_id is provided', () => {
+            return request(app)
+                .get('/api/articles/9999/comments')
+                .expect(404)
+                .then(({ body }) => {
+                    expect(Array.isArray(body)).toBe(false)
+
+                    expect(body).toHaveProperty('message')
+                    expect(body.message).toBe(`Article (9999) does not exist`)
+                })
+        });
+    });
 });
 
 describe('PATCH', () => {
