@@ -13,6 +13,7 @@ app.get('/api/topics', topics.getTopics)
 app.get('/api/articles', articles.getArticles)
 app.get('/api/articles/:article_id', articles.getArticleByID)
 app.get('/api/articles/:article_id/comments', articles.getArticleComments)
+app.post('/api/articles/:article_id/comments', articles.insertComment)
 app.patch('/api/articles/:article_id', articles.updateArticle)
 
 app.get('/api/users', users.getUsers)
