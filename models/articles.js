@@ -90,3 +90,24 @@ exports.updateArticle = (id, number) => {
         `, [number, id])
         .then(returnFirst)
 }
+
+exports.addComment = (id, { username, body }) => {
+    return DB
+        .query(`
+        INSERT INTO comments
+        (article_id, body, author)
+        VALUES ($1, $2, $3)
+        RETURNING *
+        `, [id, body, username])
+        .then(returnFirst)
+        .catch(err => {
+            const constraint = err.constraint.split('_')
+            const fieldError = constraint[1]
+
+            const value = fieldError == 'author' ? username : id
+            return Promise.reject({
+                status: 400,
+                message: `"${value}" is not a valid ${fieldError}`
+            })
+        })
+}
