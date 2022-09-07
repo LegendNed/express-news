@@ -1,6 +1,5 @@
-const { Result } = require('pg')
 const DB = require('../db')
-const { returnFirst } = require('../util/database')
+const { returnFirst, returnAll } = require('../util/database')
 
 exports.fetchArticles = ({ topic } = {}) => {
     let params = [],
@@ -53,6 +52,32 @@ exports.fetchArticleByID = (id) => {
         GROUP BY articles.article_id
         `, [id])
         .then(returnFirst)
+}
+
+exports.fetchArticleComments = (id) => {
+    return DB
+        .query(`
+        SELECT comment_id, votes, created_at, author, body
+        FROM comments
+        WHERE article_id = $1
+        `, [id])
+        .then(({ rows, rowCount }) => {
+            if (rowCount) return [rows]
+
+            return Promise.all([null,
+                DB.query(`SELECT * FROM articles WHERE article_id = $1`, [id])
+            ])
+        })
+        .then(([rows, response]) => {
+            if (rows?.length) return rows
+
+            if (!response.rows.length) return Promise.reject({
+                status: 404,
+                message: `Article (${id}) does not exist`
+            })
+
+            return []
+        })
 }
 
 exports.updateArticle = (id, number) => {
