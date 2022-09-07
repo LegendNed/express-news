@@ -42,62 +42,129 @@ describe('GET', () => {
                 })
         });
 
-        it('200: Retrieve all articles from topic query', () => {
-            return request(app)
-                .get('/api/articles?topic=cats')
-                .expect(200)
-                .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
+        describe('Queries', () => {
+            describe('?topic', () => {
+                it('200: Retrieve all articles with specific topic', () => {
+                    return request(app)
+                        .get('/api/articles?topic=cats')
+                        .expect(200)
+                        .then(({ body }) => {
+                            expect(Array.isArray(body)).toBe(false)
 
-                    const { articles } = body
-                    expect(Array.isArray(articles)).toBe(true)
-                    expect(articles).toHaveLength(1)
+                            const { articles } = body
+                            expect(Array.isArray(articles)).toBe(true)
+                            expect(articles).toHaveLength(1)
 
-                    expect(articles).toBeSortedBy('created_at', {
-                        descending: true
-                    })
+                            expect(articles).toBeSortedBy('created_at', {
+                                descending: true
+                            })
 
-                    const [article] = articles
-                    expect(article).toEqual(
-                        expect.objectContaining({
-                            "article_id": 5,
-                            "title": "UNCOVERED: catspiracy to bring down democracy",
-                            "topic": "cats",
-                            "author": "rogersop",
-                            "body": "Bastet walks amongst us, and the cats are taking arms!",
-                            "created_at": "2020-08-03T13:14:00.000Z",
-                            "votes": 0,
-                            "comment_count": 2
+                            const [article] = articles
+                            expect(article).toEqual(
+                                expect.objectContaining({
+                                    "article_id": 5,
+                                    "title": "UNCOVERED: catspiracy to bring down democracy",
+                                    "topic": "cats",
+                                    "author": "rogersop",
+                                    "body": "Bastet walks amongst us, and the cats are taking arms!",
+                                    "created_at": "2020-08-03T13:14:00.000Z",
+                                    "votes": 0,
+                                    "comment_count": 2
+                                })
+                            )
                         })
-                    )
-                })
-        });
+                });
 
-        it('200: Retrieve empty array of articles from topic query that has none', () => {
-            return request(app)
-                .get('/api/articles?topic=paper')
-                .expect(200)
-                .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
+                it('200: Retrieve empty array of articles with specific topic', () => {
+                    return request(app)
+                        .get('/api/articles?topic=paper')
+                        .expect(200)
+                        .then(({ body }) => {
+                            expect(Array.isArray(body)).toBe(false)
 
-                    const { articles } = body
-                    expect(Array.isArray(articles)).toBe(true)
-                    expect(articles).toHaveLength(0)
-                })
-        });
+                            const { articles } = body
+                            expect(Array.isArray(articles)).toBe(true)
+                            expect(articles).toHaveLength(0)
+                        })
+                });
 
-        it('404: Return an error if topic doesnt exist', () => {
-            return request(app)
-                .get('/api/articles?topic=evol')
-                .expect(404)
-                .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
+                it('404: Return an error if topic doesnt exist', () => {
+                    return request(app)
+                        .get('/api/articles?topic=evol')
+                        .expect(404)
+                        .then(({ body }) => {
+                            expect(Array.isArray(body)).toBe(false)
 
-                    expect(body).toHaveProperty('message')
-                    expect(body.message).toBe("Topic evol does not exist")
-                })
+                            expect(body).toHaveProperty('message')
+                            expect(body.message).toBe("Topic evol does not exist")
+                        })
+                });
+            });
+
+            describe('?sort_by', () => {
+                it('200: Retrieve all articles with specific sort order', () => {
+                    return request(app)
+                        .get('/api/articles?sort_by=votes')
+                        .expect(200)
+                        .then(({ body }) => {
+                            expect(Array.isArray(body)).toBe(false)
+
+                            const { articles } = body
+                            expect(Array.isArray(articles)).toBe(true)
+                            expect(articles).not.toHaveLength(0)
+
+                            expect(articles).toBeSortedBy('votes', {
+                                descending: true
+                            })
+                        })
+                });
+
+                it('400: Return an error if sort_by field doesnt exist', () => {
+                    return request(app)
+                        .get('/api/articles?sort_by=evol')
+                        .expect(400)
+                        .then(({ body }) => {
+                            expect(Array.isArray(body)).toBe(false)
+
+                            expect(body).toHaveProperty('message')
+                            expect(body.message).toBe(`Cannot sort by evol`)
+                        })
+                });
+            });
+
+            describe('?order', () => {
+                it('200: Retrieve all articles with specific order', () => {
+                    return request(app)
+                        .get('/api/articles?order=asc')
+                        .expect(200)
+                        .then(({ body }) => {
+                            expect(Array.isArray(body)).toBe(false)
+
+                            const { articles } = body
+                            expect(Array.isArray(articles)).toBe(true)
+                            expect(articles).not.toHaveLength(0)
+
+                            expect(articles).toBeSortedBy('created_at', {
+                                descending: false
+                            })
+                        })
+                });
+
+                it('400: Return an error if order option is invalid', () => {
+                    return request(app)
+                        .get('/api/articles?order=evol')
+                        .expect(400)
+                        .then(({ body }) => {
+                            expect(Array.isArray(body)).toBe(false)
+
+                            expect(body).toHaveProperty('message')
+                            expect(body.message).toBe(`Cannot order by evol`)
+                        })
+                });
+            });
         });
     });
+
 
     describe('/api/articles/:article_id', () => {
         it('200: Retrieve single artile if valid ID provided', () => {
