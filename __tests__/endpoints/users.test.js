@@ -16,8 +16,6 @@ describe('GET', () => {
                 .get('/api/users')
                 .expect(200)
                 .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
-
                     const { users } = body
                     expect(Array.isArray(users)).toBe(true)
                     expect(users.length).toBeGreaterThan(0)

@@ -9,7 +9,15 @@ exports.getArticles = (req, res, next) => {
         .then((articles) => {
             res.status(200).send({ articles })
         })
-        .catch(next)
+        .catch((err) => {
+            if (err.routine !== 'errorMissingColumn')
+                return next(err)
+
+            return next({
+                status: 400,
+                message: `Invalid property provided`
+            })
+        })
 }
 
 exports.getArticleByID = (req, res, next) => {
