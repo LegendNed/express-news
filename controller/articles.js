@@ -5,14 +5,19 @@ const POSTIVE_INT_REGEX = /^\+?(0|[1-9]\d*)$/
 exports.getArticles = (req, res, next) => {
     let query = req.query
 
-    if (query.order && !['asc', 'desc'].includes(query.order))
-        return res.status(400).send({ message: `Cannot order by ${query.order}` })
-
     fetchArticles(query)
         .then((articles) => {
             res.status(200).send({ articles })
         })
-        .catch(next)
+        .catch((err) => {
+            if (err.routine !== 'errorMissingColumn')
+                return next(err)
+
+            return next({
+                status: 400,
+                message: `Invalid property provided`
+            })
+        })
 }
 
 exports.getArticleByID = (req, res, next) => {

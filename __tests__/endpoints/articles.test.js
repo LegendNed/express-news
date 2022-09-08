@@ -16,7 +16,6 @@ describe('GET', () => {
                 .get('/api/articles')
                 .expect(200)
                 .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
 
                     const { articles } = body
                     expect(Array.isArray(articles)).toBe(true)
@@ -49,11 +48,8 @@ describe('GET', () => {
                         .get('/api/articles?topic=cats')
                         .expect(200)
                         .then(({ body }) => {
-                            expect(Array.isArray(body)).toBe(false)
-
                             const { articles } = body
-                            expect(Array.isArray(articles)).toBe(true)
-                            expect(articles).toHaveLength(1)
+                            expect(articles).not.toHaveLength(0)
 
                             expect(articles).toBeSortedBy('created_at', {
                                 descending: true
@@ -75,13 +71,11 @@ describe('GET', () => {
                         })
                 });
 
-                it('200: Retrieve empty array of articles with specific topic', () => {
+                it('200: Retrieve empty array when topic provided having 0 articles', () => {
                     return request(app)
                         .get('/api/articles?topic=paper')
                         .expect(200)
                         .then(({ body }) => {
-                            expect(Array.isArray(body)).toBe(false)
-
                             const { articles } = body
                             expect(Array.isArray(articles)).toBe(true)
                             expect(articles).toHaveLength(0)
@@ -93,8 +87,6 @@ describe('GET', () => {
                         .get('/api/articles?topic=evol')
                         .expect(404)
                         .then(({ body }) => {
-                            expect(Array.isArray(body)).toBe(false)
-
                             expect(body).toHaveProperty('message')
                             expect(body.message).toBe("Topic evol does not exist")
                         })
@@ -107,8 +99,6 @@ describe('GET', () => {
                         .get('/api/articles?sort_by=votes')
                         .expect(200)
                         .then(({ body }) => {
-                            expect(Array.isArray(body)).toBe(false)
-
                             const { articles } = body
                             expect(Array.isArray(articles)).toBe(true)
                             expect(articles).not.toHaveLength(0)
@@ -124,10 +114,8 @@ describe('GET', () => {
                         .get('/api/articles?sort_by=evol')
                         .expect(400)
                         .then(({ body }) => {
-                            expect(Array.isArray(body)).toBe(false)
-
                             expect(body).toHaveProperty('message')
-                            expect(body.message).toBe(`Cannot sort by evol`)
+                            expect(body.message).toBe(`Invalid property provided`)
                         })
                 });
             });
@@ -138,8 +126,6 @@ describe('GET', () => {
                         .get('/api/articles?order=asc')
                         .expect(200)
                         .then(({ body }) => {
-                            expect(Array.isArray(body)).toBe(false)
-
                             const { articles } = body
                             expect(Array.isArray(articles)).toBe(true)
                             expect(articles).not.toHaveLength(0)
@@ -155,8 +141,6 @@ describe('GET', () => {
                         .get('/api/articles?order=evol')
                         .expect(400)
                         .then(({ body }) => {
-                            expect(Array.isArray(body)).toBe(false)
-
                             expect(body).toHaveProperty('message')
                             expect(body.message).toBe(`Cannot order by evol`)
                         })
@@ -172,7 +156,6 @@ describe('GET', () => {
                 .get('/api/articles/1')
                 .expect(200)
                 .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
 
                     const { article } = body
                     expect(Array.isArray(article)).toBe(false)
@@ -197,7 +180,6 @@ describe('GET', () => {
                 .get('/api/articles/2')
                 .expect(200)
                 .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
 
                     const { article } = body
                     expect(Array.isArray(article)).toBe(false)
@@ -214,8 +196,6 @@ describe('GET', () => {
 
         it('400: Return error if invalid article_id is provided', () => {
             const validateResponse = ({ body }) => {
-                expect(Array.isArray(body)).toBe(false)
-
                 expect(body).toHaveProperty('message')
                 expect(body.message).toBe("Invalid article_id provided")
             }
@@ -247,7 +227,6 @@ describe('GET', () => {
                 .get('/api/articles/1/comments')
                 .expect(200)
                 .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
 
                     const { comments } = body
                     expect(Array.isArray(comments)).toBe(true)
@@ -272,7 +251,6 @@ describe('GET', () => {
                 .get('/api/articles/2/comments')
                 .expect(200)
                 .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
 
                     const { comments } = body
                     expect(comments).toEqual([])
@@ -284,7 +262,6 @@ describe('GET', () => {
                 .get('/api/articles/9999/comments')
                 .expect(404)
                 .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
 
                     expect(body).toHaveProperty('message')
                     expect(body.message).toBe(`Article (9999) does not exist`)
@@ -293,8 +270,6 @@ describe('GET', () => {
 
         it('400: Return error if invalid article_id is provided', () => {
             const validateResponse = ({ body }) => {
-                expect(Array.isArray(body)).toBe(false)
-
                 expect(body).toHaveProperty('message')
                 expect(body.message).toBe("Invalid article_id provided")
             }
@@ -325,8 +300,6 @@ describe('PATCH', () => {
     describe('/api/articles/:article_id', () => {
         it('200: Update article votes and return self', () => {
             const validateResponse = (expectedVotes, { body }) => {
-                expect(Array.isArray(body)).toBe(false)
-
                 const { article } = body
                 expect(Array.isArray(article)).toBe(false)
 
@@ -362,8 +335,6 @@ describe('PATCH', () => {
 
         it('400: Return error message if invalid body provided', () => {
             const validateResponse = ({ body }) => {
-                expect(Array.isArray(body)).toBe(false)
-
                 expect(body).toHaveProperty('message')
                 expect(body.message).toBe('Invalid vote increment provided')
             }
@@ -399,8 +370,6 @@ describe('PATCH', () => {
 
         it('400: Return error if invalid article_id is provided', () => {
             const validateResponse = ({ body }) => {
-                expect(Array.isArray(body)).toBe(false)
-
                 expect(body).toHaveProperty('message')
                 expect(body.message).toBe("Invalid article_id provided")
             }
@@ -435,8 +404,6 @@ describe('POST', () => {
     describe('/api/articles/:article_id/comments', () => {
         it('201: Append a comment to an article', () => {
             const validateResponse = ({ username, body: commentBody }, { body }) => {
-                expect(Array.isArray(body)).toBe(false)
-
                 const { comment } = body
                 expect(Array.isArray(comment)).toBe(false)
 
@@ -471,8 +438,6 @@ describe('POST', () => {
 
         it('400: Return error if invalid article_id is provided', () => {
             const validateResponse = ({ body }) => {
-                expect(Array.isArray(body)).toBe(false)
-
                 expect(body).toHaveProperty('message')
                 expect(body.message).toBe("Invalid article_id provided")
             }
@@ -499,8 +464,6 @@ describe('POST', () => {
 
         it('400: Return error message if invalid body provided', () => {
             const validateResponse = ({ body }) => {
-                expect(Array.isArray(body)).toBe(false)
-
                 expect(body).toHaveProperty('message')
                 expect(body.message).toBe('Properties should be strings')
             }
@@ -540,7 +503,6 @@ describe('POST', () => {
                 .send({ username: 'Ned', body: "Hello?" })
                 .expect(400)
                 .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
 
                     expect(body).toHaveProperty('message')
                     expect(body.message).toBe('"Ned" is not a valid author')
@@ -553,7 +515,6 @@ describe('POST', () => {
                 .send({ username: 'lurker', body: "Hello?" })
                 .expect(400)
                 .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
 
                     expect(body).toHaveProperty('message')
                     expect(body.message).toBe('"9999" is not a valid article')

@@ -3,6 +3,9 @@ const format = require('pg-format')
 const { returnFirst } = require('../util/database')
 
 exports.fetchArticles = ({ topic, sort_by = "created_at", order = "desc" } = {}) => {
+    if (order && !['asc', 'desc'].includes(order))
+        return Promise.reject({ status: 400, message: `Cannot order by ${order}` })
+
     let params = [],
         query = `
         SELECT articles.*, 
@@ -40,15 +43,6 @@ exports.fetchArticles = ({ topic, sort_by = "created_at", order = "desc" } = {})
             })
 
             return []
-        })
-        .catch((err) => {
-            if (err.routine !== 'errorMissingColumn')
-                return Promise.reject(err)
-
-            return Promise.reject({
-                status: 400,
-                message: `Cannot sort by ${sort_by}`
-            })
         })
 }
 

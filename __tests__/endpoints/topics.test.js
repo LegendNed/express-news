@@ -16,8 +16,6 @@ describe('GET', () => {
                 .get('/api/topics')
                 .expect(200)
                 .then(({ body }) => {
-                    expect(Array.isArray(body)).toBe(false)
-
                     const { topics } = body
                     expect(Array.isArray(topics)).toBe(true)
                     expect(topics.length).toBeGreaterThan(0)
