@@ -1,6 +1,5 @@
 const { fetchArticleByID, updateArticle, fetchArticles, fetchArticleComments, addComment } = require("../models/articles")
-
-const POSTIVE_INT_REGEX = /^\+?(0|[1-9]\d*)$/
+const { POSTIVE_INT_REGEX } = require("../util/server")
 
 exports.getArticles = (req, res, next) => {
     let query = req.query

@@ -1,7 +1,7 @@
 const express = require('express')
 const { DatabaseError } = require('pg')
 
-const { topics, articles, users } = require('./controller')
+const { topics, articles, users, comments } = require('./controller')
 const { isErrorObject } = require('./util/server')
 
 const app = express()
@@ -15,6 +15,8 @@ app.get('/api/articles/:article_id', articles.getArticleByID)
 app.get('/api/articles/:article_id/comments', articles.getArticleComments)
 app.post('/api/articles/:article_id/comments', articles.insertComment)
 app.patch('/api/articles/:article_id', articles.updateArticle)
+
+app.delete('/api/comments/:comment_id', comments.deleteComment)
 
 app.get('/api/users', users.getUsers)
 
