@@ -44,7 +44,7 @@ describe('GET', () => {
 
                     expect(user).toEqual(
                         expect.objectContaining({
-                            username: expect.any(String),
+                            username: 'lurker',
                             name: expect.any(String),
                             avatar_url: expect.any(String),
                         })
