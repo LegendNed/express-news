@@ -1,29 +1,13 @@
 const express = require('express')
 const { DatabaseError } = require('pg')
-
-const { topics, articles, users, comments } = require('./controller')
 const { isErrorObject } = require('./util/server')
+
+const Routes = require('./routes')
 
 const app = express()
 
 app.use(express.json())
-
-const API = require('./endpoints.json')
-app.get('/api', (req, res) => {
-    res.status(200).send(API)
-})
-
-app.get('/api/topics', topics.getTopics)
-
-app.get('/api/articles', articles.getArticles)
-app.get('/api/articles/:article_id', articles.getArticleByID)
-app.get('/api/articles/:article_id/comments', articles.getArticleComments)
-app.post('/api/articles/:article_id/comments', articles.insertComment)
-app.patch('/api/articles/:article_id', articles.updateArticle)
-
-app.delete('/api/comments/:comment_id', comments.deleteComment)
-
-app.get('/api/users', users.getUsers)
+app.use('/api', Routes)
 
 app.use((err, req, res, next) => {
     if (!err) next()
