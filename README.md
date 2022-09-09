@@ -1,4 +1,4 @@
-# NC | News Backend ([https://news.nedas.codes/](https://news.nedas.codes/))
+# NC | News Backend ([https://news.nedas.codes/api](https://news.nedas.codes/api))
 > Example project for Backend API, consiting of **Express** and **Postgress** primarily. Showcasing API endpoints and error handling for a News Application.
 
 ## Environment vars
