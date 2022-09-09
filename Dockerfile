@@ -7,7 +7,5 @@ COPY . .
 
 RUN npm install --ignore-scripts
 
-RUN npm run seed
-
 EXPOSE 9090
 CMD ["npm","start"]
