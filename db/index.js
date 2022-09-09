@@ -11,7 +11,5 @@ if (!process.env.PGDATABASE) {
 
 module.exports = new Pool(ENV == "production" ? {
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl: false
 } : {});
