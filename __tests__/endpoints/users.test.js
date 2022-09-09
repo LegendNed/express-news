@@ -32,4 +32,34 @@ describe('GET', () => {
                 })
         });
     });
+
+    describe('/api/user/:username', () => {
+        it('200: Retrieve all single', () => {
+            return request(app)
+                .get('/api/users/lurker')
+                .expect(200)
+                .then(({ body }) => {
+                    const { user } = body
+                    expect(Array.isArray(user)).toBe(false)
+
+                    expect(user).toEqual(
+                        expect.objectContaining({
+                            username: expect.any(String),
+                            name: expect.any(String),
+                            avatar_url: expect.any(String),
+                        })
+                    )
+                })
+        });
+
+        it('404: Return error if user does not exist', () => {
+            return request(app)
+                .get('/api/users/Ned')
+                .expect(404)
+                .then(({ body }) => {
+                    const { message } = body
+                    expect(message).toBe(`User Ned does not exist`)
+                })
+        })
+    });
 });
