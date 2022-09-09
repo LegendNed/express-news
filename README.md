@@ -1,17 +1,20 @@
-# NS | News Backend (Express)
+# NC | News Backend ([https://nc-news.app.nedas.codes/](https://nc-news.app.nedas.codes/))
+> Example project for Backend API, consiting of **Express** and **Postgress** primarily. Showcasing API endpoints and error handling for a News Application.
 
-# Environment vars
+## Environment vars
 This project uses the following environment variables:
 
 | Name | Description | Default Value |
 | - | - | - |
 | PGDATABASE | Define the databases for development/test ENV | nc_news |
+| DATABASE_URL | Defines connection URL for Production | Na |
+| NODE_ENV | Defines envrioment application will run in | test \| development \| production |
 
-Can be done by creating `.env.test` and `.env.development` files, having within both:
+Can be accomplished by creating `.env.<NODE_ENV>` files, having within both:
 ```
 PGDATBASE=nc_news
 ```
-With `.env.test` being concatinated with `_test`
+With `.env.test` **PGDATABASE** being concatinated with `_test`
 
 # Pre-requisites
 - Install [Node.js](https://nodejs.org/en/) version 16.x.x
@@ -20,7 +23,7 @@ With `.env.test` being concatinated with `_test`
 # Getting started
 - Clone the repository
 ```
-git clone  <git lab template url> <project_name>
+git clone <git template url> <project_name>
 ```
 - Install dependencies
 ```
@@ -29,7 +32,9 @@ npm install
 ```
 - Build and run the project
 ```
+# Not needed for Production
 npm run setup-dbs
+
 npm run seed
 npm run listen
 ```
