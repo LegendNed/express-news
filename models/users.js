@@ -14,4 +14,13 @@ exports.fetchUser = (username) => {
         WHERE username = $1
         `, [username])
         .then(returnFirst)
+        .then(user => {
+            if (!user)
+                return Promise.reject({
+                    status: 404,
+                    message: `User ${username} does not exist`
+                })
+
+            return user
+        })
 }

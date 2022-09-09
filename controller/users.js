@@ -12,9 +12,6 @@ exports.getUser = (req, res, next) => {
 
     fetchUser(username)
         .then((user) => {
-            if (!user)
-                return res.status(404).send({ message: `User ${username} does not exist` })
-
             res.status(200).send({ user })
         })
         .catch(next)

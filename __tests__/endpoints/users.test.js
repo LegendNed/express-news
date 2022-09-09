@@ -40,7 +40,6 @@ describe('GET', () => {
                 .expect(200)
                 .then(({ body }) => {
                     const { user } = body
-                    expect(Array.isArray(user)).toBe(false)
 
                     expect(user).toEqual(
                         expect.objectContaining({
