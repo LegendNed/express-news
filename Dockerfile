@@ -3,11 +3,9 @@ ENV NODE_ENV production
 
 WORKDIR /app
 
-COPY package*.json ./
-
-RUN npm install
-
 COPY . .
+
+RUN npm install --ignore-scripts
 
 RUN npm seed
 
