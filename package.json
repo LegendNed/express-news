@@ -41,5 +41,7 @@
       "jest-extended/all",
       "jest-sorted"
     ]
-  }
+  },
+  "schemaVersion": 2,
+  "templateId": "node/16.16.0"
 }
