@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const { DatabaseError } = require('pg')
 const { isErrorObject } = require('./util/server')
 
@@ -7,6 +8,7 @@ const Routes = require('./routes')
 const app = express()
 
 app.use(express.json())
+app.use(cors())
 app.use('/api', Routes)
 
 app.use((err, req, res, next) => {
